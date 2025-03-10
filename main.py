@@ -27,6 +27,9 @@ def make_order(store: store.Store):
             break
         product = next((p for p in store.products if p.name.lower() == product_name), None)
         if product:
+            if product.quantity == 0:
+                print(f"{product_name} is out of stock.")
+                continue
             try:
                 quantity = int(input("Enter quantity: "))
                 if quantity <= 0:
@@ -37,7 +40,12 @@ def make_order(store: store.Store):
                     continue
                 confirmation = input(f"Add {quantity} of {product_name} to the shopping list? (yes/no): ")
                 if confirmation.lower() == 'yes':
-                    shopping_list.append((product, quantity))
+                    # Re-check the stock before adding to the shopping list
+                    if quantity > product.quantity:
+                        print(f"Cannot order {quantity} of {product_name}. Only {product.quantity} in stock.")
+                    else:
+                        shopping_list.append((product, quantity))
+                        product.quantity -= quantity  # Temporarily reduce the stock
             except ValueError:
                 print("Invalid quantity. Please enter a number.")
         else:

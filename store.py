@@ -1,8 +1,9 @@
 from typing import List, Tuple
 from products import Product
 
+
 class Store:
-    def __init__(self, products: List[Product]):
+    def __init__(self, products):
         self.products = products
 
     def add_product(self, product: Product):
@@ -18,10 +19,13 @@ class Store:
         return [product for product in self.products if product.is_active()]
 
     def order(self, shopping_list: List[Tuple[Product, int]]) -> float:
+        # Check availability first
+        for product, quantity in shopping_list:
+            if quantity > product.get_quantity():
+                raise ValueError(f"Cannot order {quantity} of {product.name}. Only {product.get_quantity()} in stock.")
+
+        # Process the order
         total_price = 0.0
         for product, quantity in shopping_list:
-            try:
-                total_price += product.buy(quantity)
-            except ValueError as e:
-                print(e)
+            total_price += product.buy(quantity)
         return total_price
