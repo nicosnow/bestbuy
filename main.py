@@ -35,15 +35,22 @@ def start(store: store.Store):
                 quantity = int(input("Enter quantity: "))
                 product = next((p for p in store.products if p.name == product_name), None)
                 if product:
-                    shopping_list.append((product, quantity))
+                    try:
+                        shopping_list.append((product, quantity))
+                    except ValueError as e:
+                        print(e)
                 else:
                     print("Product not found.")
-            total_price = store.order(shopping_list)
-            print(f"Total price for the order: {total_price}")
+            try:
+                total_price = store.order(shopping_list)
+                print(f"Total price for the order: {total_price}")
+            except ValueError as e:
+                print(e)
         elif choice == '4':
             print("Goodbye!")
             break
         else:
             print("Invalid choice. Please try again.")
+
 # Call the start function
 start(best_buy)

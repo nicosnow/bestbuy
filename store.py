@@ -20,6 +20,8 @@ class Store:
     def order(self, shopping_list: List[Tuple[Product, int]]) -> float:
         total_price = 0.0
         for product, quantity in shopping_list:
-            total_price += product.buy(quantity)
+            try:
+                total_price += product.buy(quantity)
+            except ValueError as e:
+                print(e)
         return total_price
-
