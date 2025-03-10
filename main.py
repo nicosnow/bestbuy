@@ -1,3 +1,5 @@
+# main.py
+
 # Import the necessary modules
 import products
 import store
@@ -10,22 +12,25 @@ product_list = [
 ]
 best_buy = store.Store(product_list)
 
-def list_products(store: store.Store):
-    products = store.get_all_products()
-    for index, product in enumerate(products, start=1):
+def list_products(store_instance: store.Store):
+    """List all products in the store."""
+    products_list = store_instance.get_all_products()
+    for index, product in enumerate(products_list, start=1):
         print(f"{index}. {product.show()}\n")
 
-def show_total_quantity(store: store.Store):
-    total_quantity = store.get_total_quantity()
+def show_total_quantity(store_instance: store.Store):
+    """Show the total quantity of all products in the store."""
+    total_quantity = store_instance.get_total_quantity()
     print(f"Total quantity in store: {total_quantity}")
 
-def make_order(store: store.Store):
+def make_order(store_instance: store.Store):
+    """Make an order from the store."""
     shopping_list = []
     while True:
         product_name = input("Enter product name (or 'done' to finish): ").lower()
         if product_name == 'done':
             break
-        product = next((p for p in store.products if p.name.lower() == product_name), None)
+        product = next((p for p in store_instance.products if p.name.lower() == product_name), None)
         if product:
             if product.quantity == 0:
                 print(f"{product_name} is out of stock.")
@@ -51,11 +56,13 @@ def make_order(store: store.Store):
         else:
             print("Product not found. Please enter a valid product name.")
     try:
-        total_price = store.order(shopping_list)
+        total_price = store_instance.order(shopping_list)
         print(f"Total price for the order: {total_price}")
-    except ValueError as e:
-        print(e)
-def start(store: store.Store):
+    except ValueError as error:
+        print(error)
+
+def start(store_instance: store.Store):
+    """Start the store application."""
     while True:
         print("1. List all products in store")
         print("2. Show total amount in store")
@@ -65,11 +72,11 @@ def start(store: store.Store):
         choice = input("Please choose an option: ")
 
         if choice == '1':
-            list_products(store)
+            list_products(store_instance)
         elif choice == '2':
-            show_total_quantity(store)
+            show_total_quantity(store_instance)
         elif choice == '3':
-            make_order(store)
+            make_order(store_instance)
         elif choice == '4':
             print("Goodbye!")
             break

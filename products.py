@@ -1,39 +1,29 @@
+# products.py
+
 class Product:
-    def __init__(self, name: str, price: float, quantity: int):
-        if not name or price < 0 or quantity < 0:
-            raise ValueError("Invalid product details")
+    """Represents a product in the store."""
+
+    def __init__(self, name, price, quantity):
+        """Initialize the product with a name, price, and quantity."""
         self.name = name
         self.price = price
         self.quantity = quantity
-        self.active = True
 
-    def get_quantity(self) -> int:
+    def get_quantity(self):
+        """Return the quantity of the product."""
         return self.quantity
 
-    def set_quantity(self, quantity: int):
-        if quantity < 0:
-            raise ValueError("Quantity cannot be negative")
-        self.quantity = quantity
-        if self.quantity == 0:
-            self.deactivate()
+    def is_active(self):
+        """Check if the product is active (quantity > 0)."""
+        return self.quantity > 0
 
-    def is_active(self) -> bool:
-        return self.active
+    def show(self):
+        """Return a string representation of the product."""
+        return f"{self.name} - ${self.price} ({self.quantity} in stock)"
 
-    def activate(self):
-        self.active = True
-
-    def deactivate(self):
-        self.active = False
-
-    def show(self) -> str:
-        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
-
-    def buy(self, quantity: int) -> float:
-        if quantity <= 0:
-            raise ValueError("Quantity must be greater than zero")
+    def buy(self, quantity):
+        """Buy a certain quantity of the product."""
         if quantity > self.quantity:
-            raise ValueError("Not enough quantity available")
-        total_price = self.price * quantity
-        self.set_quantity(self.quantity - quantity)
-        return total_price
+            raise ValueError(f"Cannot buy {quantity} of {self.name}. Only {self.quantity} in stock.")
+        self.quantity -= quantity
+        return self.price * quantity
