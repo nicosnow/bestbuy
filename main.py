@@ -32,6 +32,9 @@ def make_order(store: store.Store):
                 if quantity <= 0:
                     print("Quantity must be greater than zero.")
                     continue
+                if quantity > product.quantity:
+                    print(f"Cannot order {quantity} of {product_name}. Only {product.quantity} in stock.")
+                    continue
                 confirmation = input(f"Add {quantity} of {product_name} to the shopping list? (yes/no): ")
                 if confirmation.lower() == 'yes':
                     shopping_list.append((product, quantity))
@@ -44,7 +47,6 @@ def make_order(store: store.Store):
         print(f"Total price for the order: {total_price}")
     except ValueError as e:
         print(e)
-
 def start(store: store.Store):
     while True:
         print("1. List all products in store")
