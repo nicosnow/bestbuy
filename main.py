@@ -8,7 +8,9 @@ import store
 product_list = [
     products.Product("MacBook Air M2", price=1450, quantity=100),
     products.Product("Bose QuietComfort Earbuds", price=250, quantity=500),
-    products.Product("Google Pixel 7", price=500, quantity=250)
+    products.Product("Google Pixel 7", price=500, quantity=250),
+    products.NonStockedProduct("Windows License", price=125),
+    products.LimitedProduct("Shipping", price=10, quantity=250, maximum=1)
 ]
 best_buy = store.Store(product_list)
 
@@ -32,7 +34,7 @@ def make_order(store_instance: store.Store):
             break
         product = next((p for p in store_instance.products if p.name.lower() == product_name), None)
         if product:
-            if product.quantity == 0:
+            if product.quantity == 0 and not isinstance(product, products.NonStockedProduct):
                 print(f"{product_name} is out of stock.")
                 continue
             try:
@@ -40,17 +42,18 @@ def make_order(store_instance: store.Store):
                 if quantity <= 0:
                     print("Quantity must be greater than zero.")
                     continue
-                if quantity > product.quantity:
+                if quantity > product.quantity and not isinstance(product, products.NonStockedProduct):
                     print(f"Cannot order {quantity} of {product_name}. Only {product.quantity} in stock.")
                     continue
                 confirmation = input(f"Add {quantity} of {product_name} to the shopping list? (yes/no): ")
                 if confirmation.lower() == 'yes':
                     # Re-check the stock before adding to the shopping list
-                    if quantity > product.quantity:
+                    if quantity > product.quantity and not isinstance(product, products.NonStockedProduct):
                         print(f"Cannot order {quantity} of {product_name}. Only {product.quantity} in stock.")
                     else:
                         shopping_list.append((product, quantity))
-                        product.quantity -= quantity  # Temporarily reduce the stock
+                        if not isinstance(product, products.NonStockedProduct):
+                            product.quantity -= quantity  # Temporarily reduce the stock
             except ValueError:
                 print("Invalid quantity. Please enter a number.")
         else:
