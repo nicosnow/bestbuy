@@ -1,10 +1,12 @@
-# products.py
-
 class Product:
     """Represents a product in the store."""
 
     def __init__(self, name, price, quantity):
         """Initialize the product with a name, price, and quantity."""
+        if not name:
+            raise ValueError("Product name cannot be empty.")
+        if price < 0:
+            raise ValueError("Product price cannot be negative.")
         self.name = name
         self.price = price
         self.quantity = quantity
