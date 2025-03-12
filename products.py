@@ -12,6 +12,7 @@ class Product:
         self.name = name
         self.price = price
         self.quantity = quantity
+        self.promotion = None
 
     def get_quantity(self):
         """Return the quantity of the product."""
@@ -23,13 +24,20 @@ class Product:
 
     def show(self):
         """Return a string representation of the product."""
-        return f"{self.name} - ${self.price} ({self.quantity} in stock)"
+        promotion_info = f" (Promotion: {self.promotion.name})" if self.promotion else ""
+        return f"{self.name} - ${self.price} ({self.quantity} in stock){promotion_info}"
+
+    def set_promotion(self, promotion):
+        """Set a promotion for the product."""
+        self.promotion = promotion
 
     def buy(self, quantity):
         """Buy a certain quantity of the product."""
         if quantity > self.quantity:
             raise ValueError(f"Cannot buy {quantity} of {self.name}. Only {self.quantity} in stock.")
         self.quantity -= quantity
+        if self.promotion:
+            return self.promotion.apply_promotion(self, quantity)
         return self.price * quantity
 
 class NonStockedProduct(Product):
@@ -62,9 +70,5 @@ class LimitedProduct(Product):
     def buy(self, quantity):
         """Buy a certain quantity of the limited product."""
         if quantity > self.maximum:
-            raise ValueError(f"Cannot buy more than {self.maximum} of {self.name} in a single order.")
+            raise ValueError(f"Cannot buy more than {self.maximum} of {self.name} at a time.")
         return super().buy(quantity)
-
-    def show(self):
-        """Return a string representation of the limited product."""
-        return f"{self.name} - ${self.price} ({self.quantity} in stock, max {self.maximum} per order)"
