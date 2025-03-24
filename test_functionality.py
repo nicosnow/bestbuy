@@ -1,6 +1,8 @@
+# test_functionality.py
 import pytest
 from products import Product, NonStockedProduct, LimitedProduct
 from promotions import PercentDiscount, SecondHalfPrice, ThirdOneFree
+from store import Store
 
 def test_order_limited_product_over_limit():
     product = LimitedProduct(name="Shipping", price=10, quantity=250, maximum=1)
@@ -27,3 +29,20 @@ def test_third_one_free_promotion():
     product.set_promotion(promotion)
     total_price = product.buy(4)
     assert total_price == 300  # 3 full price + 1 free
+
+def test_store_initialization_with_invalid_product():
+    with pytest.raises(TypeError):
+        Store(product_list=["Invalid Product"])
+
+def test_store_add_invalid_product():
+    store = Store(product_list=[])
+    with pytest.raises(TypeError):
+        store.add_product("Invalid Product")
+
+def test_store_order():
+    product1 = Product(name="Product 1", price=50, quantity=5)
+    product2 = Product(name="Product 2", price=30, quantity=3)
+    store = Store(product_list=[product1, product2])
+    shopping_list = [(product1, 2), (product2, 1)]
+    total_price = store.order(shopping_list)
+    assert total_price == 130  # 2 * 50 + 1 * 30

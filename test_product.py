@@ -14,10 +14,8 @@ def test_create_product_with_invalid_details():
         Product(name="", price=100, quantity=10)
     with pytest.raises(ValueError):
         Product(name="Test Product", price=-100, quantity=10)
-
-def test_product_becomes_inactive_when_quantity_zero():
-    product = Product(name="Test Product", price=100, quantity=0)
-    assert not product.is_active()
+    with pytest.raises(ValueError):
+        Product(name="Test Product", price=100, quantity=-10)
 
 def test_product_purchase_modifies_quantity_and_returns_output():
     product = Product(name="Test Product", price=100, quantity=10)

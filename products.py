@@ -1,5 +1,3 @@
-# products.py
-
 class Product:
     """Represents a product in the store."""
 
@@ -9,36 +7,56 @@ class Product:
             raise ValueError("Product name cannot be empty.")
         if price < 0:
             raise ValueError("Product price cannot be negative.")
+        if quantity < 0:
+            raise ValueError("Product quantity cannot be negative.")
         self.name = name
         self.price = price
         self.quantity = quantity
+        self.active = True
         self.promotion = None
 
-    def get_quantity(self):
+    def get_quantity(self) -> int:
         """Return the quantity of the product."""
         return self.quantity
 
-    def is_active(self):
-        """Check if the product is active (quantity > 0)."""
-        return self.quantity > 0
+    def set_quantity(self, quantity):
+        """Set the quantity of the product. Deactivate if quantity is 0."""
+        if quantity < 0:
+            raise ValueError("Product quantity cannot be negative.")
+        self.quantity = quantity
+        if self.quantity == 0:
+            self.deactivate()
 
-    def show(self):
+    def is_active(self) -> bool:
+        """Check if the product is active."""
+        return self.active
+
+    def activate(self):
+        """Activate the product."""
+        self.active = True
+
+    def deactivate(self):
+        """Deactivate the product."""
+        self.active = False
+
+    def show(self) -> str:
         """Return a string representation of the product."""
-        promotion_info = f" (Promotion: {self.promotion.name})" if self.promotion else ""
-        return f"{self.name} - ${self.price} ({self.quantity} in stock){promotion_info}"
+        return f"{self.name}, Price: {self.price}, Quantity: {self.quantity}"
+
+    def buy(self, quantity) -> float:
+        """Buy a certain quantity of the product."""
+        if quantity <= 0:
+            raise ValueError("Quantity must be greater than zero.")
+        if quantity > self.get_quantity():
+            raise ValueError(f"Cannot buy {quantity} of {self.name}. Only {self.get_quantity()} in stock.")
+        self.set_quantity(self.get_quantity() - quantity)
+        if self.promotion:
+            return self.promotion.apply_promotion(self, quantity)
+        return self.price * quantity
 
     def set_promotion(self, promotion):
         """Set a promotion for the product."""
         self.promotion = promotion
-
-    def buy(self, quantity):
-        """Buy a certain quantity of the product."""
-        if quantity > self.quantity:
-            raise ValueError(f"Cannot buy {quantity} of {self.name}. Only {self.quantity} in stock.")
-        self.quantity -= quantity
-        if self.promotion:
-            return self.promotion.apply_promotion(self, quantity)
-        return self.price * quantity
 
 class NonStockedProduct(Product):
     """Represents a non-stocked product in the store."""
